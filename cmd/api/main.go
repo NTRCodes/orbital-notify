@@ -29,7 +29,10 @@ func main() {
 	}
 
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "ok")
+		_, err := fmt.Fprintln(w, "ok")
+		if err != nil {
+			return
+		}
 	})
 
 	fmt.Println("API running on :" + cfg.Port)
