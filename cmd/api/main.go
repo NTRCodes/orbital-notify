@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/ntrcodes/orbital-notify/internal/config"
+	"github.com/ntrcodes/orbital-notify/internal/server"
 )
 
 func main() {
@@ -20,20 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server := &http.Server{
-		Addr:         ":" + cfg.Port,
-		Handler:      nil,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		IdleTimeout:  120 * time.Second,
-	}
-
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		_, err := fmt.Fprintln(w, "ok")
-		if err != nil {
-			return
-		}
-	})
+	srv := server.New(cfg.Port)
 
 	fmt.Println("API running on :" + cfg.Port)
 
@@ -44,13 +32,13 @@ func main() {
 		<-quit
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		err := server.Shutdown(ctx)
+		err := srv.Shutdown(ctx)
 		if err != nil {
 			log.Printf("shutdown error: %v", err)
 		}
 	}()
 
-	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+	if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatal(err)
 	}
 }

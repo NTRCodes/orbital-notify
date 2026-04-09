@@ -29,7 +29,7 @@ This system is meant to showcase the kind of backend work I enjoy:
 
 ### v0
 - [ ] project scaffold
-- [ ] basic API server
+- [ ] basic API srv
 - [ ] health check endpoint
 
 ### v1
